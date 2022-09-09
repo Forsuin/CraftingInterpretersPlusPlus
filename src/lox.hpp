@@ -16,6 +16,5 @@ private:
     static std::string_view readFile(std::string_view path);
     static void run(std::string_view source);
 
-    static void error(int line, std::string_view message);
-    static void report(int line, std::string_view where, std::string_view message);
+
 };
