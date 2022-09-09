@@ -25,7 +25,11 @@ public:
 private:
     bool isAtEnd();
     void scanToken();
+    void string();
+    bool match(char expected);
+    char peek();
     char advance();
     void addToken(TokenType type);
     void addToken(TokenType type, std::variant<double, std::string_view, std::monostate> literal);
+
 };
