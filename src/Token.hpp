@@ -16,15 +16,17 @@ public:
     : type(type), lexeme(lexeme), literal(literal), line(line) {}
 
 
-    std::string_view toString() {
+    std::string toString() {
         if (std::holds_alternative<double>(literal)) {
-            return std::format("{} {} {}", type, lexeme, std::get<double>(literal));
+            return std::format("{} {} {}", type.name, lexeme, std::get<double>(literal));
         }
         else if(std::holds_alternative<std::string_view>(literal)){
-            return std::format("{} {} {}", type, lexeme, std::get<std::string_view>(literal));
+            return std::format("{} {} {}", type.name, lexeme, std::get<std::string_view>(literal));
+
         }
         else{
-            return std::format("{} {} {}", type, lexeme, "NULL");
+            return std::format("{} {} {}", type.name, lexeme, "NULL");
+
         }
     }
 };

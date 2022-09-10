@@ -5,10 +5,11 @@
 #include <format>
 
 #include "lox.hpp"
+#include "scanner.hpp"
 
+bool Lox::hadError = false;
 
 void Lox::main(int argc, char **argv) {
-    hadError = false;
 
     if(argc > 2){
         std::cout << "Usage: jlox [script]" << std::endl;
@@ -42,10 +43,10 @@ void Lox::runPrompt() {
 
 void Lox::run(std::string_view source) {
     Scanner scanner(source);
-    std::vector<Token> tokens = scanner.scanTokens();
+    std::span<Token> tokens = scanner.scanTokens();
 
     for(Token t : tokens){
-        std::cout << t << '\n';
+        std::cout << t.toString() << std::endl;
     }
 }
 

@@ -1,5 +1,28 @@
+#include <string>
+
 #include "scanner.hpp"
 #include "loxError.hpp"
+
+
+std::unordered_map<std::string, TokenType> Scanner::keywords = {
+        { "and",    TokenType::AND },
+        { "class",  TokenType::CLASS },
+        { "else",   TokenType::ELSE },
+        { "false",  TokenType::FALSE },
+        { "for",    TokenType::FOR },
+        { "fun",    TokenType::FUN },
+        { "if",     TokenType::IF },
+        { "nil",    TokenType::NIL },
+        { "or",     TokenType::OR },
+        { "print",  TokenType::PRINT },
+        { "return", TokenType::RETURN },
+        { "super",  TokenType::SUPER },
+        { "this",   TokenType::THIS },
+        { "true",   TokenType::TRUE },
+        { "var",    TokenType::VAR },
+        { "while",  TokenType::WHILE },
+};
+
 
 std::span<Token> Scanner::scanTokens() {
     while(!isAtEnd()){
@@ -50,7 +73,7 @@ void Scanner::scanToken() {
             addToken(TokenType::STAR);
             break;
         case '!':
-            addToken(match('=') ? TokenType::BANG_EQUAL : BANG); break;
+            addToken(match('=') ? TokenType::BANG_EQUAL : TokenType::BANG); break;
         case '=':
             addToken(match('=') ? TokenType::EQUAL_EQUAL : TokenType::EQUAL); break;
         case '<':
@@ -77,9 +100,45 @@ void Scanner::scanToken() {
         case '"': string(); break;
 
         default:
-            LoxError::error(line, "Unexpected character.");
+            if(isDigit(c)){
+                number();
+            }
+            else if(isAlpha(c)){
+                identifier();
+            }
+            else {
+                LoxError::error(line, "Unexpected character.");
+            }
             break;
     }
+}
+
+void Scanner::identifier() {
+    while(isAlphaNumeric(peek())) advance();
+
+    std::string_view text = source.substr(start, current - start);
+    auto it = keywords.find(text.data());
+    TokenType type = TokenType::IDENTIFIER;
+    if(it != keywords.end()) type = it->second;
+
+    addToken(type);
+}
+
+void Scanner::number() {
+    while(isDigit(peek())) advance();
+
+    //Look for fractional part
+    if(peek() == '.' && isDigit(peekNext())) {
+        //Consume the '.'
+        advance();
+
+        while (isDigit(peek())) advance();
+    }
+
+    double num = 0;
+    std::from_chars(source.data() + start, source.data() + current, num);
+
+    addToken(TokenType::NUMBER, num);
 }
 
 void Scanner::string() {
@@ -116,6 +175,25 @@ char Scanner::peek(){
     return source.at(current);
 }
 
+char Scanner::peekNext() {
+    if(current + 1 >= source.length()) return '\0';
+    return source.at(current + 1);
+}
+
+bool Scanner::isAlpha(char c) {
+    return  (c >= 'A' && c <= 'Z') ||
+            (c >= 'a' && c <= 'z') ||
+            (c == '_');
+}
+
+bool Scanner::isDigit(char c) {
+    return c >= '0' && c <= '9';
+}
+
+bool Scanner::isAlphaNumeric(char c) {
+    return (isAlpha(c) || isDigit(c));
+}
+
 //look at and consume the next character
 char Scanner::advance() {
     return source.at(current++);
@@ -127,5 +205,5 @@ void Scanner::addToken(TokenType type) {
 
 void Scanner::addToken(TokenType type, std::variant<double, std::string_view, std::monostate> literal) {
     std::string_view text = source.substr(start, current - start);
-    tokens.push_back(Token(type, text, literal, line));
+    tokens.emplace_back(type, text, literal, line);
 }
