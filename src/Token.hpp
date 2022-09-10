@@ -18,14 +18,14 @@ public:
 
     std::string toString() {
         if (std::holds_alternative<double>(literal)) {
-            return std::format("{} {} {}", type.name, lexeme, std::get<double>(literal));
+            return std::format("TokenType: {:12}  Lexeme: {:10}  Literal: {}", type.name, lexeme, std::get<double>(literal));
         }
         else if(std::holds_alternative<std::string_view>(literal)){
-            return std::format("{} {} {}", type.name, lexeme, std::get<std::string_view>(literal));
+            return std::format("TokenType: {:12}  Lexeme: {:10}  Literal: {}", type.name, lexeme, std::get<std::string_view>(literal));
 
         }
         else{
-            return std::format("{} {} {}", type.name, lexeme, "NULL");
+            return std::format("TokenType: {:12}  Lexeme: {:10}  Literal: {}", type.name, lexeme, "NULL");
 
         }
     }

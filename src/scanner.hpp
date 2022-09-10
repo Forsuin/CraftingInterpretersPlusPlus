@@ -17,13 +17,13 @@ private:
     int current = 0;
     int line = 0;
 
-    static std::unordered_map<std::string, TokenType> keywords;
+    static std::unordered_map<std::string_view, TokenType> keywords;
+
 
 public:
     Scanner(std::string_view source) : source(source) {}
 
     std::span<Token> scanTokens();
-
 
 private:
     bool isAtEnd();

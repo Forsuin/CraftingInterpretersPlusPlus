@@ -4,7 +4,7 @@
 #include "loxError.hpp"
 
 
-std::unordered_map<std::string, TokenType> Scanner::keywords = {
+std::unordered_map<std::string_view, TokenType> Scanner::keywords = {
         { "and",    TokenType::AND },
         { "class",  TokenType::CLASS },
         { "else",   TokenType::ELSE },
@@ -117,7 +117,7 @@ void Scanner::identifier() {
     while(isAlphaNumeric(peek())) advance();
 
     std::string_view text = source.substr(start, current - start);
-    auto it = keywords.find(text.data());
+    auto it = keywords.find(text);
     TokenType type = TokenType::IDENTIFIER;
     if(it != keywords.end()) type = it->second;
 
