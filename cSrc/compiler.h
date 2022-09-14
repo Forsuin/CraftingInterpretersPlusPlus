@@ -2,6 +2,8 @@
 #ifndef CRAFTINGINTERPRETERS_COMPILER_H
 #define CRAFTINGINTERPRETERS_COMPILER_H
 
-void compile(const char* source);
+#include "vm.h"
+
+bool compile(const char* source, Chunk* chunk);
 
 #endif //CRAFTINGINTERPRETERS_COMPILER_H
